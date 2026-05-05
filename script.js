@@ -20,6 +20,8 @@ function saveState(state) {
 }
 
 async function run() {
+  console.log("🔥 SCHEDULE RUN:", new Date().toISOString());
+  
   const res = await axios.get(
     `https://api.openweathermap.org/data/2.5/weather?q=Pearland,US&appid=${WEATHER_API_KEY}&units=imperial`
   );
