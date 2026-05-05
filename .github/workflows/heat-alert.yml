@@ -2,8 +2,8 @@ name: Heat Alert
 
 on:
   schedule:
-    - cron: "*/10 * * * *"  # every 10 minutes
-  workflow_dispatch:        # allows manual run
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
