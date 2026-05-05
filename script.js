@@ -38,7 +38,7 @@ async function run() {
         app_id: ONESIGNAL_APP_ID,
         included_segments: ["All"],
         headings: { en: "Heat Alert" },
-        contents: { en: `Heat index is ${Math.round(heatIndex)}°F in Pearland` }
+        contents: { en: `Heat index is currently ${Math.round(heatIndex)}°F in Pearland. Stay hydrated and avoid prolonged outdoor activities.` }
       },
       {
         headers: {
