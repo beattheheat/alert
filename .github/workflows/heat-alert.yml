@@ -5,6 +5,9 @@ on:
     - cron: "*/10 * * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   run-script:
     runs-on: ubuntu-latest
@@ -12,26 +15,27 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
+        with:
+          persist-credentials: true
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install dependencies
         run: npm install
-
       - name: Run script
         run: node script.js
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           ONESIGNAL_APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
           ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
-
       - name: Commit state
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+
           git add state.json || true
-          git commit -m "Update state" || true
-          git push
+
+          git commit -m "Update state" || echo "No changes to commit"
+
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
