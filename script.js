@@ -55,7 +55,11 @@ async function run() {
     state.lastAlert = now;
     saveState(state);
   } else {
-    console.log("No alert sent this run:", new Date().toISOString())
+    console.log("No alert sent this run:", new Date().toISOString());
+  }
 }
 
-run();
+run().catch(err => {
+  console.error("Script failed:", err);
+  process.exit(1);
+});
