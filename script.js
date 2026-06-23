@@ -33,7 +33,7 @@ async function run() {
 
   const state = loadState();
 
-  if (heatIndex > 85 && now - state.lastAlert >= COOLDOWN_MS) {
+  if (heatIndex > 90 && now - state.lastAlert >= COOLDOWN_MS) {
     await axios.post(
       "https://onesignal.com/api/v1/notifications",
       {
