@@ -1,17 +1,16 @@
 name: Heat Alert
-
 on:
   schedule:
     - cron: "*/30 * * * *"
+    - cron: "5 0 * * *"
+      timezone: "America/Chicago"
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
-  run-script:
+  heat-check:
+    if: github.event.schedule == '*/45 * * * *' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -25,6 +24,32 @@ jobs:
         run: npm install
       - name: Run script
         run: node script.js
+        env:
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+          ONESIGNAL_APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+      - name: Commit state
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add state.json || true
+          git commit -m "Update state" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+  daily-forecast:
+    if: github.event.schedule == '5 0 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Run daily forecast script
+        run: node daily-forecast.js
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           ONESIGNAL_APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
