@@ -38,6 +38,17 @@ async function run() {
   const peakHeatIndex = Math.round(peak.main.feels_like);
   const peakTime = formatCentralTime(peak.dt);
 
+  const HIGH_THRESHOLD = 90;
+  const highEntries = todaysEntries.filter(entry => entry.main.feels_like > HIGH_THRESHOLD);
+
+  let message = `Good morning! Today's heat index will peak at ${peakHeatIndex}°F in Pearland, expected around ${peakTime}.`;
+
+  if (highEntries.length > 0) {
+    const startTime = formatCentralTime(highEntries[0].dt);
+    const endTime = formatCentralTime(highEntries[highEntries.length - 1].dt);
+    message += ` Heat index is expected to exceed ${HIGH_THRESHOLD}°F between ${startTime} and ${endTime}. Exercise elevated caution when outdoors during this time.`;
+  }
+
   console.log(`Today's peak heat index: ${peakHeatIndex}F around ${peakTime}`);
 
   await axios.post(
@@ -47,7 +58,7 @@ async function run() {
       included_segments: ["All"],
       headings: { en: "Today's Heat Forecast" },
       contents: {
-        en: `Today's heat index will peak at ${peakHeatIndex}°F in Pearland, expected around ${peakTime}.`
+        en: message
       }
     },
     {
